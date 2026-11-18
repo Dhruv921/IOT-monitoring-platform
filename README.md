@@ -1,1 +1,1 @@
-# IOT-monitoring-platform
+IoT monitoring platform: MQTT, InfluxDB, Grafana, Docker
