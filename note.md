@@ -6,3 +6,8 @@ Wildcards: + matches one level(building/+/sensor-01/telemetry), and # mtches eve
 Qos:delivery guarantee. 0 is at most once. 1 is at least once, 2 is exactly once.
 Retained message: the broker stores the last message on the toic and gives it to every new subscriber immedietly.  
 The last will (a message the broker sends if a client disconnects unexpectedly) we use in Block 3.
++++++++++++++++++++++++++++++++++++++
+What is the topic for telemetry? Use building/room1/senseor-01/telemtry, and give each sensor its own room or ID.
+What dose the JSON payload contain? It needs sensor_id, temprature, humidity and timestamp.
+Why use UTC for the timestamp?(HInt: sensors in diffrent time zones, and daylight saving changes.)
+Why dose each sensor use its own MQTT client insteand of one client for all five? (HInt: last will belongs to a connection, and each sensor should be able to fail independently.)
