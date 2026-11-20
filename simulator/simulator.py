@@ -1,4 +1,3 @@
-from sqlite3 import connect
 
 import paho.mqtt.client as mqtt
 import json
@@ -40,15 +39,14 @@ class Sensor:
         
         self.temperature = max(15, min(30, self.temperature))
         temp_to_send = self.temperature
-        if random.random() < 0.02:  # 5% chance to send an outlier temperature
-            temp_to_send += random.uniform(35,40)
+        if random.random() < 0.02:  # 2% chance to send an outlier temperature
+            temp_to_send = random.uniform(35,40)
         self.humidity = max(20, min(80, self.humidity))
         data={
             "sensor_id": self.sensor_id,
-            "temperature": round(self.temperature, 2),
             "humidity": round(self.humidity, 2),
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "temp_to_send": round(temp_to_send, 2)
+            "temperature": round(temp_to_send, 2)
         }
         payload = json.dumps(data)
         self.client.publish(self.topic,payload, qos=1)
@@ -73,7 +71,9 @@ try:
 except KeyboardInterrupt:
     for sensor in sensors:
         sensor.client.loop_stop()
-        sensor.client.disconnect()
+        sensor.client.publish(sensor.status_topic, "online", qos=1, retain=True)
+        
+        sensor.wait_for_publish().disconnect()
     
     print("Exiting...")
 

@@ -11,3 +11,8 @@ What is the topic for telemetry? Use building/room1/senseor-01/telemtry, and giv
 What dose the JSON payload contain? It needs sensor_id, temprature, humidity and timestamp.
 Why use UTC for the timestamp?(HInt: sensors in diffrent time zones, and daylight saving changes.)
 Why dose each sensor use its own MQTT client insteand of one client for all five? (HInt: last will belongs to a connection, and each sensor should be able to fail independently.)
+
+Clean exit (disconnect()): the client sends an MQTT DISCONNECT packet. The broker takes it as “I’m leaving on purpose” and discards the will. It never publishes offline, so the status topic stays at the last retained message, online.
+Crash (process killed, network lost, power cut): no DISCONNECT packet arrives. The broker waits for the keepalive time (10 seconds in your code) with no traffic, decides the client is dead, and publishes the will. That is why every sensor shows offline.
+
+in InfluxDB :Goal: every valid MQTT message the ingestor receives is stored in a time-series database.
